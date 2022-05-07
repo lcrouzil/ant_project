@@ -14,6 +14,7 @@ public class CommanderAnt extends Ant implements Flow.Subscriber, Flow.Subscript
     }
 
     public void run() {
+        System.out.println("hello from Commander");
 
     }
 

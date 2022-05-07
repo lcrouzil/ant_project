@@ -1,6 +1,8 @@
 package com.example.antwar;
 
-public abstract class Ant {
+import java.io.Serializable;
+
+public abstract class Ant implements Serializable,Runnable { // Runnable comme thread mais en implements permet de garder le extend
     boolean isInjured = false;
     AnthillColor AntColor;
     int XPos;
@@ -10,13 +12,15 @@ public abstract class Ant {
         this.AntColor=Color;
         this.XPos=x;
         this.YPos=y;
-        //Map.getInstance().getTiles()[x][y].addAnt(this);
-
+        //Map.getInstance().getTiles()[x][y].addAnt();
     }
 
+    /**fourmi blesse
+     *
+     * @param injuried
+     */
     void setInjured(boolean injuried){
         this.isInjured = injuried;
-
     }
 
     public boolean getInjured(){

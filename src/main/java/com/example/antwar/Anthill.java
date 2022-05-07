@@ -2,7 +2,7 @@ package com.example.antwar;
 
 import java.util.ArrayList;
 
-public class Anthill extends Thread {
+public class Anthill extends Ant {
 
     private int XPOS;
     private int YPOS;
@@ -14,26 +14,23 @@ public class Anthill extends Thread {
     private int score ;
 
 
-    /**
-     * merci intelij
-     *
-     * @param color
+    /**constructeur
+     * @param Color, x ,y
      */
-    public Anthill(AnthillColor color, int XPOS, int YPOS ) {
+    public Anthill(AnthillColor Color, int x, int y) {
+        super(Color,x,y);
 
-        this.color = color;
         this.resource = 0;
-        this.XPOS=XPOS;
-        this.YPOS=YPOS;
+
 //        WorkerAnt workerAnt = new WorkerAnt(color,XPOS,YPOS);
 //        this.workers.add(workerAnt);
-        for (int i = 0; i < 50; i++) {
-            WorkerAnt workerAnt = new WorkerAnt(color,XPOS,YPOS);
-            this.workers.add(workerAnt);
-
-
-
-        }
+//        for (int i = 0; i < 50; i++) {
+//            WorkerAnt workerAnt = new WorkerAnt(color,XPOS,YPOS);
+////            this.workers.add(workerAnt);
+//
+//
+//
+//        }
 
     }
 
@@ -80,7 +77,7 @@ public class Anthill extends Thread {
     }
 
     public void run() {
-
+        System.out.println("hello from Queen");
     }
 
     /*public void addResource(Resource[]){
