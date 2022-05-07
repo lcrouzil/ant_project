@@ -1,9 +1,9 @@
 package com.example.antwar;
 
 public enum AnthillColor {
-    RED,
+    GREEN,
     BLUE,
-    YELLOW,
-    GREEN
+    YELLOW
+
 
 }

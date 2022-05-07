@@ -6,7 +6,7 @@ import javafx.scene.paint.Color;
 import java.util.ArrayList;
 
 public class Tile {
-    ArrayList<Resource> resources = new ArrayList<Resource>();
+    int resources;
     ArrayList<Ant> Ants = new ArrayList<Ant>();
     ;
     //Map<AnthillColor Color, int Pheromone> pheromones;
@@ -20,14 +20,9 @@ public class Tile {
         this.x_pos = x_pos;
         this.y_pos = y_pos;
 
-        for (ResourceType collecte : ResourceType.values()) {
-            int a = Constants.randomInt(0, 30);
-            for (int i = 0; i < a; i++) {
-                this.resources.add(new Resource(collecte));
 
-            }
+        this.resources = Constants.randomInt(0, 30);
 
-        }
 
     }
 
@@ -40,7 +35,9 @@ public class Tile {
     public void addAnt(Ant ant) {
         if (!Ants.contains(ant)) {
             Ants.add(ant);
+            System.out.println("fourmi ajouté");
         } else {
+            System.out.println("else du add");
         }
     }
 
@@ -70,14 +67,34 @@ public class Tile {
     }
 
     public void draw(GraphicsContext gc) {
-        if (this.resources.size() > 0) {
-            gc.setFill(Color.rgb(255, 0, 0));
 
+        if (this.anthill != null) {
+            switch (this.anthill.Color()) {
+                case GREEN -> gc.setFill(Color.GREEN);
+                case BLUE -> gc.setFill(Color.BLUE);
+                case YELLOW -> gc.setFill(Color.YELLOW);
+
+            }
+        }else if (this.Ants.size()>0) {
+            switch (this.Ants.get(0).AntColor) {
+                case GREEN -> {
+                    gc.fillOval(1, 1, 1, 1);
+                }
+
+                case BLUE -> gc.setFill(Color.BLUE);
+                case YELLOW -> gc.setFill(Color.YELLOW);
+            }
         }
-        gc.fillRect(this.x_pos * 2.5, this.y_pos * 2.5, 2.5, 2.5);
+        else if (this.resources > 0) {
+            int a = this.resources * 255 / 30;
+            gc.setFill(Color.rgb(a, 0, 0));
+        }
+
+
+        gc.fillRect(this.x_pos * (Constants.WINDOW_SIZE_X / Constants.MAP_SIZE_X), this.y_pos * (Constants.WINDOW_SIZE_Y / Constants.MAP_SIZE_Y), (Constants.WINDOW_SIZE_X / Constants.MAP_SIZE_X), (Constants.WINDOW_SIZE_Y / Constants.MAP_SIZE_Y));
         gc.setLineWidth(0.5);
         gc.setStroke(Color.rgb(14, 25, 8));
-        gc.strokeRect(this.x_pos * 2.5, this.y_pos * 2.5, 2.5, 2.5);
+        gc.strokeRect(this.x_pos * (Constants.WINDOW_SIZE_X / Constants.MAP_SIZE_X), this.y_pos * (Constants.WINDOW_SIZE_Y / Constants.MAP_SIZE_Y), (Constants.WINDOW_SIZE_X / Constants.MAP_SIZE_X), (Constants.WINDOW_SIZE_Y / Constants.MAP_SIZE_Y));
     }
 
     /*

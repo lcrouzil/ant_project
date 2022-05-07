@@ -13,10 +13,12 @@ import java.io.IOException;
 public class Application extends javafx.application.Application {
     @Override
     public void start(Stage stage) throws IOException {
+        Map.getInstance();
         Group root = new Group();
         Scene scene = new Scene(root);
+        stage.setResizable(false);
         stage.setTitle("AntGame");
-        Canvas canvas = new Canvas( Constants.MAP_SIZE_X , Constants.MAP_SIZE_Y  );
+        Canvas canvas = new Canvas( Constants.WINDOW_SIZE_X , Constants.WINDOW_SIZE_Y  );
         stage.setScene(scene);
         root.getChildren().add( canvas );
         new AnimationTimer()

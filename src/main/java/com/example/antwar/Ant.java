@@ -10,6 +10,7 @@ public abstract class Ant {
         this.AntColor=Color;
         this.XPos=x;
         this.YPos=y;
+        //Map.getInstance().getTiles()[x][y].addAnt(this);
 
     }
 
