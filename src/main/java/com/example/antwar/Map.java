@@ -1,10 +1,8 @@
 package com.example.antwar;
 
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.shape.MoveTo;
 
 import java.util.Random;
-import java.math.*;
 
 /**
  * une seul map par jeu
@@ -20,23 +18,24 @@ public class Map implements InterfaceMap {
         tiles = new Tile[Constants.MAP_SIZE_X][Constants.MAP_SIZE_Y];
         for (int i = 0; i < Constants.MAP_SIZE_X; i++) {
             for (int j = 0; j < Constants.MAP_SIZE_Y; j++) {
+                //   this.tiles[i][j] = new Tile(null, i, j);
                 this.tiles[i][j] = new Tile(null, i, j);
             }
         }
 
-        //placement des fourmilieres avec fourmis(50 par fourmiliere) et commandants (5 par fourmiliere)
-        //for (AnthillColor color : AnthillColor.values()) {
+        //placement des fourmilieres avec fourmis(50 par fourmiliere) et commandants (5 par fourmilieres)
+        //fourmiliere colore
         AnthillColor color;
         for (int j = 0; j < 3; j++) {
-            switch (j){
-                case 0 :
-                    color=AnthillColor.BLUE;
+            switch (j) {
+                case 0:
+                    color = AnthillColor.BLUE;
                     break;
-                case 1 :
-                    color=AnthillColor.GREEN;
+                case 1:
+                    color = AnthillColor.GREEN;
                     break;
-                case 2 :
-                    color=AnthillColor.YELLOW;
+                case 2:
+                    color = AnthillColor.YELLOW;
                     break;
                 default:
                     throw new IllegalStateException("Unexpected value: " + j);
@@ -44,26 +43,37 @@ public class Map implements InterfaceMap {
 
             int XPosAntHill = Constants.randomInt(0, Constants.MAP_SIZE_X - 1);
             int YPosAntHill = Constants.randomInt(0, Constants.MAP_SIZE_Y - 1);
-            if (this.tiles[XPosAntHill][YPosAntHill].anthill == null) {
+            if (tiles[XPosAntHill][YPosAntHill].anthill == null) {
                 Anthill TempoAntHill = new Anthill(color, XPosAntHill, YPosAntHill);
-                this.tiles[XPosAntHill][YPosAntHill].anthill = TempoAntHill; // recupere dans une tempo les anthills
+                tiles[XPosAntHill][YPosAntHill].anthill = TempoAntHill; // recupere dans une tempo les anthills
                 anthills[j] = TempoAntHill;
 
-
+                // création des commandant
                 for (int i = 0; i < 5; i++) {
-                    this.tiles[XPosAntHill][YPosAntHill].addAnt(new CommanderAnt(color,XPosAntHill,YPosAntHill));
+                    tiles[XPosAntHill][YPosAntHill].addAnt(new CommanderAnt(color, XPosAntHill, YPosAntHill));
+                    System.out.println(tiles[XPosAntHill][YPosAntHill].ants);
                 }
-                Thread thread = new Thread(this.tiles[XPosAntHill][YPosAntHill].Ants.get(0)); // rend l'objet en thread
-                thread.start(); //lance le thread
-                ;
+//                Thread thread = new Thread(tiles[XPosAntHill][YPosAntHill].ants.get(0)); // rend l'objet en thread
+//                thread.start(); //lance le thread
+
+                //creation des fourmies
                 for (int i = 0; i < 50; i++) {
-                    this.tiles[XPosAntHill][YPosAntHill].addAnt(new WorkerAnt(color,XPosAntHill,YPosAntHill));
+                    Random rand = new Random();
+                    int x = rand.nextInt(Constants.MAP_SIZE_X);
+                    int y = rand.nextInt(Constants.MAP_SIZE_Y);
+                    tiles[XPosAntHill][YPosAntHill].addAnt(new WorkerAnt(color, XPosAntHill, YPosAntHill));
+                    tiles[x][y].addAnt(new WorkerAnt(color, x, y));
                 }
-                System.out.println(this.tiles[XPosAntHill][YPosAntHill].Ants.size());
+                System.out.println(tiles[XPosAntHill][YPosAntHill].ants.size());
             }
         }
     }
-
+//creation de fonction pour thread
+    /**
+     * get la map
+     *
+     * @return
+     */
     public static Map getInstance() {
         if (singleton == null) {
             singleton = new Map();
@@ -71,10 +81,20 @@ public class Map implements InterfaceMap {
         return singleton;
     }
 
+    /**
+     * get tuile
+     *
+     * @return
+     */
     public Tile[][] getTiles() {
         return tiles;
     }
 
+    /**
+     * création de la partie graphic
+     *
+     * @param gc
+     */
     public void draw(GraphicsContext gc) {
         for (Tile[] tiles : this.tiles) { //tableau de tableau
             for (Tile tile : tiles) { // recupere les elements du tableau le plus bas
@@ -83,76 +103,50 @@ public class Map implements InterfaceMap {
         }
     }
 
-    /**
-     * recupere la tile de la fourmiliere
-     * @param anthill
-     * @return
-     */
-    public Tile GetTile(Anthill anthill) {
-        if(anthill!=null) {
+    public Tile getTile(Anthill anthill) {
+        if (anthill != null) {
             return tiles[anthill.XPos][anthill.YPos];
         }
         return null;
     }
 
-    /**
-     * recuepre le tile de la fourmi
-     * @param ant
-     * @return
-     */
-    public Tile GetTile(Ant ant) {
-        if(ant!=null) {
-            return tiles[ant.getXPos()][ant.getYPos()];
-        }
-        return null;
+    public Tile getTile(Ant ant) {
+        return tiles[ant.getXPos()][ant.getYPos()];
     }
 
-    public Tile TileOnLeft(Ant ant) {
 
-        if(ant.getYPos()-1!=-1) { //verif bord de map gauche
-            return tiles[ant.getXPos()][ant.getYPos()-1];
+    public Tile getTile(int x, int y) {
+        if (x >= Constants.MAP_SIZE_X - 1 || y >= Constants.MAP_SIZE_Y || x < 0 || y < 0) {
+            return null;
         }
-        return null;
-    }
 
-    public Tile TileOnRight(Ant ant) {
-
-        if(ant.getYPos()+1!=Constants.MAP_SIZE_Y) { //verif bord de map droite
-            return tiles[ant.getXPos()][ant.getYPos()+1];
-        }
-        return null;
-    }
-
-    public Tile TileOnTop(Ant ant) {
-
-        if(ant.getXPos()+1!=Constants.MAP_SIZE_X) { //verif bord de map sup
-            return tiles[ant.getXPos()+1][ant.getYPos()];
-        }
-        return null;
-    }
-
-    public Tile TileOnBottom(Ant ant) {
-
-        if(ant.getXPos()-1!=-1) { //verif bord de map sup
-            return tiles[ant.getXPos()-1][ant.getYPos()];
-        }
-        return null;
+        return tiles[x][y];
     }
 
     /**
-     * déplacement de fourmi
+     * deplacement de la fourmie
+     * supprime la fourmi de la case puis la mettre dans la nouvelle tuile
+     *
      * @param ant
      * @param tile
      */
-    public void MoveTo(Ant ant,Tile tile){
-        Tile OldTile = GetTile(ant);
-        synchronized (OldTile){
-        OldTile.removeAnt(ant);
+    public synchronized void moveTo(Ant ant, Tile tile) {
+        Tile OldTile = getTile(ant.getXPos(), ant.getYPos());
+
+        if (OldTile != null) {
+            OldTile.removeAnt(ant);
         }
-        synchronized (tile){
+
         tile.addAnt(ant);
-        }
     }
+
+
+//    public void MoveTo(Ant ant,Tile tile,tileNext){
+//
+//        if (tile.getAnts().remove(ant)){
+//            tileNext.getAnts().add(ant);
+//        }
+//    }
 
     //TODO
 //    public void threadRun() {

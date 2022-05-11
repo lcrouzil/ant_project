@@ -2,66 +2,80 @@ package com.example.antwar;
 
 import java.util.ArrayList;
 import java.util.Observable;
+import java.util.Random;
 import java.util.concurrent.Flow;
 
-public class WorkerAnt extends Ant implements Flow.Subscriber{
+public class WorkerAnt extends Ant implements Flow.Subscriber {
     public ArrayList<Resource> resources = new ArrayList<Resource>();
     private QueenOrders CommanderOrder;
 
-    /**merci intelij
+    /**
+     * merci intelij
      *
      * @param Color
      * @param x
      * @param y
      */
-    public WorkerAnt(AnthillColor Color, int x, int y){
-        super(Color,x,y);
-        
-
-
+    public WorkerAnt(AnthillColor Color, int x, int y) {
+        super(Color, x, y);
     }
-    public void update(){
-        //ordre emis reine
-        //ordre recu capitain
-        //ordre emis capitaine 
-        //ordre recu fourmi
-        //ordre enum donc ? for each ?
-        switch (CommanderOrder){
-            case GO_FIND_RESSOURCE: //obligatoire
-                //fourmi ressource sur le dos
-                if (resources.size()<6){
 
+    /**
+     * mise a jour des ordres
+     */
+    public void update() {
+        //random entre 1 et 4 ( 4 possibilite de déplacement)
+        Random random = new Random();
+        int nb = random.nextInt(4);
+
+        System.out.println("update");
+        Tile tile;
+        switch (nb) {
+            case 0: // deplacement vers le haut
+
+                tile = Map.getInstance().getTile(this.XPos, this.YPos - 1);
+
+                if (tile != null) {
+                    Map.getInstance().moveTo(this, tile);
+                }
+                break;
+            case 1:
+                tile = Map.getInstance().getTile(this.XPos, this.YPos + 1);
+
+                if (tile != null) {
+                    Map.getInstance().moveTo(this, tile);
                 }
 
-                //fourmi pleine
-                else {
-                    //Map.getInstance().anthills[]
-                }
-                    //retour base
-                // verifier ressource sur la case
-                //Map.getInstance().MoveTo();
                 break;
-            case FOCUS_FOOD:
-                //fct
-                break;
-            case GO_ANTHILL: //obligatoire
-                //fct
-                break;
-            case FOCUS_POINT:
-                //fct
-                break;
+            case 2:
+                tile = Map.getInstance().getTile(this.XPos + 1, this.YPos);
 
-            default:
-                throw new IllegalStateException("Unexpected value: " + CommanderOrder);
+                if (tile != null) {
+                    Map.getInstance().moveTo(this, tile);
+                }
+
+                break;
+            case 3:
+                tile = Map.getInstance().getTile(this.XPos - 1, this.YPos);
+
+                if (tile != null) {
+                    Map.getInstance().moveTo(this, tile);
+                }
+                break;
         }
+        //verifie diff de nul avant déplacement
+        // int[] randomCoord = this.lenomdetamethodedansAnt(this.this.XPos], this.this.YPos])
+        //Map.getInstance().MoveTo(this,Map.getInstance().getTiles()[this.XPos][this.YPos],Map.getInstance().getTiles()[random[0][random[1]);
     }
 
-
+    /**
+     * run des fourmi
+     */
     public void run() {
         System.out.println("hello from Slave");
-        while(true) { // infini (refelchir a finir)
-            update();
+        while (true) { // infini (refelchir a finir)
             try {
+                update();
                 Thread.sleep(50);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
