@@ -10,27 +10,18 @@ public class Anthill extends Ant {
     ArrayList<CommanderAnt> commanders = new ArrayList<CommanderAnt>();
     ArrayList<Resource> resources = new ArrayList<Resource>();
     AnthillColor color;
-    private int resource ;
-    private int score ;
+    public ArrayList<Resource> resource = new ArrayList<Resource>();
+    private int score;
 
 
-    /**constructeur
+    /**
+     * constructeur
+     *
      * @param Color, x ,y
      */
-    public Anthill(AnthillColor Color, int x, int y) {
-        super(Color,x,y);
+    public Anthill(AnthillColor Color, int x, int y, int IndexAnthill) {
+        super(Color, x, y, IndexAnthill);
 
-        this.resource = 0;
-
-//        WorkerAnt workerAnt = new WorkerAnt(color,XPOS,YPOS);
-//        this.workers.add(workerAnt);
-//        for (int i = 0; i < 50; i++) {
-//            WorkerAnt workerAnt = new WorkerAnt(color,XPOS,YPOS);
-////            this.workers.add(workerAnt);
-//
-//
-//
-//        }
 
     }
 
@@ -64,13 +55,15 @@ public class Anthill extends Ant {
 
     }
 
-    /**ajout de resource a la fourmiliere
+    /**
+     * ajout de resource a la fourmiliere
      *
      * @param recolte
      */
-    public void addResource(int recolte) {
-        this.resource += recolte ;
+    public void addResource(Resource recolte) {
+        this.resource.add(recolte);
     }
+
     //TODO
     public int getScore() {
         return 0;
@@ -79,8 +72,4 @@ public class Anthill extends Ant {
     public void run() {
         System.out.println("hello from Queen");
     }
-
-    /*public void addResource(Resource[]){
-
-    }*/
 }

@@ -13,25 +13,25 @@ import java.io.IOException;
 public class Application extends javafx.application.Application {
     @Override
     public void start(Stage stage) throws IOException {
-        Map.getInstance();
+        Map.getInstance().runthread();
         Group root = new Group();
         Scene scene = new Scene(root);
         stage.setResizable(false);
         stage.setTitle("AntGame");
-        Canvas canvas = new Canvas( Constants.WINDOW_SIZE_X , Constants.WINDOW_SIZE_Y  );
+        Canvas canvas = new Canvas(Constants.WINDOW_SIZE_X, Constants.WINDOW_SIZE_Y);
         stage.setScene(scene);
-        root.getChildren().add( canvas );
-        new AnimationTimer()
-        {
+        root.getChildren().add(canvas);
+        stage.setOnCloseRequest(e -> System.exit(0));
+        new AnimationTimer() {
             @Override
-            public void handle(long currentNanoTime)
-            {
+            public void handle(long currentNanoTime) {
                 GraphicsContext gc = canvas.getGraphicsContext2D();
                 gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
                 Map.getInstance().draw(gc);
                 try {
                     Thread.sleep(50);
-                } catch (InterruptedException e) { }
+                } catch (InterruptedException e) {
+                }
             }
         }.start();
         stage.show();

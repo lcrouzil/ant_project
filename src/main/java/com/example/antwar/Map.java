@@ -44,31 +44,52 @@ public class Map implements InterfaceMap {
             int XPosAntHill = Constants.randomInt(0, Constants.MAP_SIZE_X - 1);
             int YPosAntHill = Constants.randomInt(0, Constants.MAP_SIZE_Y - 1);
             if (tiles[XPosAntHill][YPosAntHill].anthill == null) {
-                Anthill TempoAntHill = new Anthill(color, XPosAntHill, YPosAntHill);
+                Anthill TempoAntHill = new Anthill(color, XPosAntHill, YPosAntHill, j);
                 tiles[XPosAntHill][YPosAntHill].anthill = TempoAntHill; // recupere dans une tempo les anthills
                 anthills[j] = TempoAntHill;
 
                 // création des commandant
+                CommanderAnt NewCommander;
                 for (int i = 0; i < 5; i++) {
-                    tiles[XPosAntHill][YPosAntHill].addAnt(new CommanderAnt(color, XPosAntHill, YPosAntHill));
-                    System.out.println(tiles[XPosAntHill][YPosAntHill].ants);
+                    NewCommander = new CommanderAnt(color, XPosAntHill, YPosAntHill, j);
+                    tiles[XPosAntHill][YPosAntHill].addAnt(NewCommander);
+                    anthills[j].commanders.add(NewCommander);
+                    //System.out.println(tiles[XPosAntHill][YPosAntHill].ants);
                 }
-//                Thread thread = new Thread(tiles[XPosAntHill][YPosAntHill].ants.get(0)); // rend l'objet en thread
-//                thread.start(); //lance le thread
 
                 //creation des fourmies
+                WorkerAnt NewAnt;
                 for (int i = 0; i < 50; i++) {
-                    Random rand = new Random();
-                    int x = rand.nextInt(Constants.MAP_SIZE_X);
-                    int y = rand.nextInt(Constants.MAP_SIZE_Y);
-                    tiles[XPosAntHill][YPosAntHill].addAnt(new WorkerAnt(color, XPosAntHill, YPosAntHill));
-                    tiles[x][y].addAnt(new WorkerAnt(color, x, y));
+                    NewAnt = new WorkerAnt(color, XPosAntHill, YPosAntHill, j);
+                    tiles[XPosAntHill][YPosAntHill].addAnt(NewAnt);
+                    anthills[j].workers.add(NewAnt);
+                    System.out.println(tiles[XPosAntHill][YPosAntHill].ants);
                 }
                 System.out.println(tiles[XPosAntHill][YPosAntHill].ants.size());
+
             }
         }
+// verif des coord du tableau
+//        WorkerAnt workerantBlue = new WorkerAnt(AnthillColor.BLUE,10,10,10);
+//        WorkerAnt workerantGreen = new WorkerAnt(AnthillColor.GREEN,10,11,10);
+//        tiles[1][1].addAnt(workerantBlue);
+//        tiles[1][3].addAnt(workerantGreen);
+
+
     }
-//creation de fonction pour thread
+
+    /**
+     * run les threads
+     */
+    public void runthread() {
+        Thread thread = new Thread(anthills[1].commanders.get(0)); // rend l'objet en thread
+        thread.start(); //lance le thread
+        thread = new Thread(anthills[2].commanders.get(0)); // rend l'objet en thread
+        thread.start(); //lance le thread
+        thread = new Thread(anthills[0].commanders.get(0)); // rend l'objet en thread
+        thread.start(); //lance le thread
+    }
+
     /**
      * get la map
      *
@@ -91,7 +112,7 @@ public class Map implements InterfaceMap {
     }
 
     /**
-     * création de la partie graphic
+     * creation de la partie graphic
      *
      * @param gc
      */
@@ -116,7 +137,7 @@ public class Map implements InterfaceMap {
 
 
     public Tile getTile(int x, int y) {
-        if (x >= Constants.MAP_SIZE_X - 1 || y >= Constants.MAP_SIZE_Y || x < 0 || y < 0) {
+        if (x >= Constants.MAP_SIZE_X || y >= Constants.MAP_SIZE_Y || x < 0 || y < 0) {
             return null;
         }
 
@@ -139,52 +160,5 @@ public class Map implements InterfaceMap {
 
         tile.addAnt(ant);
     }
-
-
-//    public void MoveTo(Ant ant,Tile tile,tileNext){
-//
-//        if (tile.getAnts().remove(ant)){
-//            tileNext.getAnts().add(ant);
-//        }
-//    }
-
-    //TODO
-//    public void threadRun() {
-//        Tile tempoTile=GetTile(anthills[0]);
-//        Thread[] threads = new Thread[tempoTile.ALants.size()];
-//        int i = 0;
-//        Thread thread = new Thread(anthills[0]);
-//        thread.start();
-//        for(Ant e: tempoTile.ALants) {
-//            threads[i++] = new Thread(e);
-//        }
-//        for(Thread t : threads) {
-//            t.start();
-//        }
-//        tempoTile=GetTile(anthills[2]);
-//        threads = new Thread[tempoTile.ALants.size()];
-//        i = 0;
-//        thread = new Thread(anthills[1]);
-//        thread.start();
-//        for(Ant e: tempoTile.ALants) {
-//            threads[i++] = new Thread(e);
-//        }
-//        for(Thread t : threads) {
-//            t.start();
-//        }
-//        tempoTile=GetTile(anthills[1]);
-//        threads = new Thread[tempoTile.ALants.size()];
-//        i = 0;
-//        thread = new Thread(anthills[2]);
-//        thread.start();
-//        for(Ant e: tempoTile.ALants) {
-//            threads[i++] = new Thread(e);
-//        }
-//        for(Thread t : threads) {
-//            t.start();
-//        }
-//
-//    }
-
 }
 

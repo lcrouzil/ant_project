@@ -12,14 +12,14 @@ public class Tile {
 
     ;
     //Map<AnthillColor Color, int Pheromone> pheromones;
-     public Anthill anthill;
+    public Anthill anthill;
     public final int x_pos;
     public final int y_pos;
 
     public Tile(Anthill who, int x_pos, int y_pos) {
 
         this.anthill = who;
-        this.ants= new ArrayList<>();
+        this.ants = new ArrayList<>();
         this.x_pos = x_pos;
         this.y_pos = y_pos;
         this.resources = Constants.randomInt(0, 25);
@@ -70,7 +70,8 @@ public class Tile {
 
     }
 
-    /**creation du contexte graphic
+    /**
+     * creation du contexte graphic
      *
      * @param gc
      */
@@ -85,7 +86,7 @@ public class Tile {
             }
 
             gc.fillRect(this.x_pos * (Constants.WINDOW_SIZE_X / Constants.MAP_SIZE_X), this.y_pos * (Constants.WINDOW_SIZE_Y / Constants.MAP_SIZE_Y), (Constants.WINDOW_SIZE_X / Constants.MAP_SIZE_X), (Constants.WINDOW_SIZE_Y / Constants.MAP_SIZE_Y));
-        }else if (this.ants.size()>0) {
+        } else if (this.ants.size() > 0) {
             switch (this.ants.get(0).AntColor) {
                 case GREEN -> {
                     gc.setFill(Color.GREEN);
@@ -111,28 +112,28 @@ public class Tile {
     }
 
 
-    /**ramasse les resources de la case
+    /**
+     * ramasse les resources de la case
      *
      * @return
      */
     public Resource TakeResource() {
         //sécurité
-        if (Resources.isEmpty())
-        {
+        if (Resources.isEmpty()) {
             return null;
         }
         //enlever 1 de ressource sur la case et retourne la ressource
         return Resources.remove(0);
     }
 
-    /**recupere la quantite de ressource
+    /**
+     * recupere la quantite de ressource
      *
      * @return
      */
-    public int getTileResourceQuantity(){
+    public int getTileResourceQuantity() {
         //sécurité
-        if (Resources.isEmpty())
-        {
+        if (Resources.isEmpty()) {
             return 0;
         }
         //retourne la taille des ressources de la case

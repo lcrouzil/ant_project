@@ -2,28 +2,32 @@ package com.example.antwar;
 
 import java.io.Serializable;
 
-public abstract class Ant implements Serializable,Runnable { // Runnable comme thread mais en implements permet de garder le extend
+public abstract class Ant implements Serializable, Runnable { // Runnable comme thread mais en implements permet de garder le extend
     boolean isInjured = false;
     AnthillColor AntColor;
     int XPos;
     int YPos;
+    int IndexAnthill;
 
-    public Ant(AnthillColor Color,int x,int y) {
-        this.AntColor=Color;
-        this.XPos=x;
-        this.YPos=y;
+    public Ant(AnthillColor Color, int x, int y, int IndexAnthill) {
+        this.AntColor = Color;
+        this.XPos = x;
+        this.YPos = y;
+        this.IndexAnthill = IndexAnthill;
+
         //Map.getInstance().getTiles()[x][y].addAnt();
     }
 
-    /**fourmi blesse
+    /**
+     * fourmi blesse
      *
      * @param injuried
      */
-    void setInjured(boolean injuried){
+    void setInjured(boolean injuried) {
         this.isInjured = injuried;
     }
 
-    public boolean getInjured(){
+    public boolean getInjured() {
         return this.isInjured;
     }
 
