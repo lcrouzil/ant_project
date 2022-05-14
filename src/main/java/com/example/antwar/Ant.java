@@ -15,7 +15,6 @@ public abstract class Ant implements Serializable, Runnable { // Runnable comme 
         this.YPos = y;
         this.IndexAnthill = IndexAnthill;
 
-        //Map.getInstance().getTiles()[x][y].addAnt();
     }
 
     /**

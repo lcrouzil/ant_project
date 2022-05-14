@@ -1,6 +1,8 @@
 package com.example.antwar;
 
 import java.util.ArrayList;
+import java.util.concurrent.Flow;
+import java.util.concurrent.SubmissionPublisher;
 
 public class Anthill extends Ant {
 
@@ -8,10 +10,12 @@ public class Anthill extends Ant {
     private int YPOS;
     ArrayList<WorkerAnt> workers = new ArrayList<WorkerAnt>();
     ArrayList<CommanderAnt> commanders = new ArrayList<CommanderAnt>();
-    ArrayList<Resource> resources = new ArrayList<Resource>();
+    //ArrayList<Resource> resources = new ArrayList<Resource>();
     AnthillColor color;
     public ArrayList<Resource> resource = new ArrayList<Resource>();
     private int score;
+    private SubmissionPublisher<QueenOrders> OrdreReine;
+
 
 
     /**
@@ -21,8 +25,16 @@ public class Anthill extends Ant {
      */
     public Anthill(AnthillColor Color, int x, int y, int IndexAnthill) {
         super(Color, x, y, IndexAnthill);
+        this.OrdreReine = new SubmissionPublisher<>();
 
 
+    }
+
+    /**
+     * information pour abonnement
+     */
+    public void DemandeAboReine(Flow.Subscriber<QueenOrders> AboReine){
+        this.OrdreReine.subscribe(AboReine);
     }
 
     /**
@@ -62,14 +74,26 @@ public class Anthill extends Ant {
      */
     public void addResource(Resource recolte) {
         this.resource.add(recolte);
+
     }
 
     //TODO
     public int getScore() {
-        return 0;
+        return this.resource.size();
     }
 
     public void run() {
-        System.out.println("hello from Queen");
+        while (!Constants.FinGame) { // tant que game pas fini
+            if(Constants.RetournerMaison){
+                this.OrdreReine.offer(QueenOrders.GO_ANTHILL,(sub, order)->{ return true;});
+            }else{
+                this.OrdreReine.offer(QueenOrders.GO_FIND_RESSOURCE,(sub, order)->{ return true;});
+            }
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }

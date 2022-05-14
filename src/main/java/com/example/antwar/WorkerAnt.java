@@ -1,25 +1,30 @@
 package com.example.antwar;
 
 import java.util.ArrayList;
-import java.util.Observable;
-import java.util.Random;
-import java.util.concurrent.Flow;
 
-public class WorkerAnt extends Ant implements Flow.Subscriber {
+import java.util.Random;
+
+import java.util.TimerTask;
+import java.util.concurrent.Flow.Subscriber;
+import java.util.concurrent.Flow.Subscription;
+
+public class WorkerAnt extends Ant implements Subscriber {
     public ArrayList<Resource> resources = new ArrayList<Resource>();
-    private QueenOrders CommanderOrder;
+    private QueenOrders CommanderOrder = QueenOrders.GO_FIND_RESSOURCE;
     int XposAnthill;
     int YposAnthill;
+    private boolean GO_HOME = false;
+    private Subscription AboDuWorkerAnt;
 
     /**
-     * merci intelij
-     *
      * @param Color
      * @param x
      * @param y
      */
-    public WorkerAnt(AnthillColor Color, int x, int y, int IndexAnthill) {
+    public WorkerAnt(AnthillColor Color, int x, int y, int IndexAnthill, CommanderAnt MonCommander) {
         super(Color, x, y, IndexAnthill);
+        MonCommander.DemandeAboCommander(this);
+
     }
 
     /**
@@ -34,7 +39,6 @@ public class WorkerAnt extends Ant implements Flow.Subscriber {
         Random random = new Random();
 
 
-        System.out.println("update");
 
 
         if (Map.getInstance().getTile(this.XPos, this.YPos - 1) != null) { //vers le haut
@@ -51,9 +55,6 @@ public class WorkerAnt extends Ant implements Flow.Subscriber {
         }
 
         int nb = IntList.get(random.nextInt(IntList.size())); //random sur la list de int
-        if (CommanderOrder == QueenOrders.GO_ANTHILL || this.resources.size() >= Constants.AntLoadMax) {
-            CommanderOrder = QueenOrders.GO_ANTHILL;
-        }
         switch (CommanderOrder) {
             case GO_ANTHILL:
                 XposAnthill = Map.getInstance().anthills[IndexAnthill].XPos;
@@ -67,20 +68,23 @@ public class WorkerAnt extends Ant implements Flow.Subscriber {
                     tile = Map.getInstance().getTile(this.XPos - 1, this.YPos);
                     Map.getInstance().moveTo(this, tile);
                     this.XPos--;
-                } else if (this.YPos < YposAnthill) { // doit descendre
+                } else if (this.YPos > YposAnthill) { // doit descendre
                     tile = Map.getInstance().getTile(this.XPos, this.YPos - 1);
                     Map.getInstance().moveTo(this, tile);
                     this.YPos--;
-                } else if (this.YPos > YposAnthill) { //doit monter
+                } else if (this.YPos < YposAnthill) { //doit monter
                     tile = Map.getInstance().getTile(this.XPos, this.YPos + 1);
                     Map.getInstance().moveTo(this, tile);
                     this.YPos++;
-                }
+                } else if (!this.resources.isEmpty()) { //doit decharger les ressources
+                    Map.getInstance().anthills[IndexAnthill].addResource(this.resources.remove(this.resources.size()-1));
+            }
 
                 break;
 
             default:
-                if (this.resources.size() >= Constants.AntLoadMax) { // si fourmi pas pleine
+
+                if (GO_HOME) { // si fourmi pas pleine
                     XposAnthill = Map.getInstance().anthills[IndexAnthill].XPos;
                     YposAnthill = Map.getInstance().anthills[IndexAnthill].YPos;
 
@@ -92,25 +96,30 @@ public class WorkerAnt extends Ant implements Flow.Subscriber {
                         tile = Map.getInstance().getTile(this.XPos - 1, this.YPos);
                         Map.getInstance().moveTo(this, tile);
                         this.XPos--;
-                    } else if (this.YPos < YposAnthill) { // doit monter (affichage)
+                    } else if (this.YPos > YposAnthill) { // doit monter (affichage)
                         tile = Map.getInstance().getTile(this.XPos, this.YPos - 1);
                         Map.getInstance().moveTo(this, tile);
                         this.YPos--;
-                    } else if (this.YPos > YposAnthill) { //doit descendre (affichage)
+                    } else if (this.YPos < YposAnthill) { //doit descendre (affichage)
                         tile = Map.getInstance().getTile(this.XPos, this.YPos + 1);
                         Map.getInstance().moveTo(this, tile);
                         this.YPos++;
                     }else if (!this.resources.isEmpty()) { //doit decharger les ressources
-                        Map.getInstance().anthills[IndexAnthill].resource.add(this.resources.remove(this.resources.size()-1));
-
+                        Map.getInstance().anthills[IndexAnthill].addResource(this.resources.remove(this.resources.size()-1));
+                        if(this.resources.isEmpty()){ // vide donc plus besoin de rester a la maison
+                            GO_HOME=false;
+                        }
                     }
 
-                } else if (Map.getInstance().getTile(this.XPos, this.YPos).getTileResourceQuantity() > 0) { // si ressource sur case
+                    } else if (Map.getInstance().getTile(this.XPos, this.YPos).getTileResourceQuantity() > 0) { // si ressource sur case
                     resources.add(Map.getInstance().getTile(this.XPos, this.YPos).TakeResource()); //prend la ressource et l'ajoute
-                    if (resources.get(-1) == null) { //dans le cas d'une mauvaise synchro et ressource acquise null retire de la liste (perte d'un tour a améliorer)
-                        resources.remove(resources.get(-1));// retrait de la resource null
+                    if (resources.get(resources.size()-1) == null) { //dans le cas d'une mauvaise synchro et ressource acquise null retire de la liste (perte d'un tour a améliorer)
+                        resources.remove(resources.size()-1);// retrait de la resource null
                     }
-                } else
+                    if (resources.size()==Constants.AntLoadMax){
+                        GO_HOME = true;
+                    }
+                } else {
                     switch (nb) { //déplacement
                         case 0: // deplacement vers le haut
 
@@ -139,6 +148,7 @@ public class WorkerAnt extends Ant implements Flow.Subscriber {
 
 
                     }
+                }
         }
     }
 
@@ -146,8 +156,7 @@ public class WorkerAnt extends Ant implements Flow.Subscriber {
      * run des fourmi
      */
     public void run() {
-        System.out.println("hello from Slave");
-        while (true) { // infini (refelchir a finir)
+        while (!Constants.FinGame) { // tant que game pas fini
             try {
                 update();
                 Thread.sleep(50);
@@ -157,15 +166,16 @@ public class WorkerAnt extends Ant implements Flow.Subscriber {
         }
     }
 
-
     @Override
-    public void onSubscribe(Flow.Subscription subscription) {
-
+    public void onSubscribe(Subscription subscription) {
+        this.AboDuWorkerAnt = subscription;
+        this.AboDuWorkerAnt.request(1); // recevoir le prochain message
     }
 
     @Override
     public void onNext(Object item) {
-
+        this.CommanderOrder= (QueenOrders) item;
+        this.AboDuWorkerAnt.request(1); // demande le prochain message
     }
 
     @Override

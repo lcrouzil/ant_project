@@ -2,19 +2,34 @@ package com.example.antwar;
 
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.concurrent.Flow;
+import java.util.concurrent.SubmissionPublisher;
+import java.util.concurrent.Flow.Subscriber;
+import java.util.concurrent.Flow.Subscription;
+
 
 import static com.example.antwar.QueenOrders.GO_ANTHILL;
 
-public class CommanderAnt extends Ant implements Flow.Subscriber, Flow.Subscription {
+public class CommanderAnt extends Ant implements Subscriber, Subscription {
 
     private QueenOrders OrdreReine = QueenOrders.GO_FIND_RESSOURCE;
+    private SubmissionPublisher<QueenOrders> CommanderOrder;
+    private Subscription AboDuCommander;
 
-    public CommanderAnt(AnthillColor Color, int x, int y, int IndexAnthill) {
+
+    public CommanderAnt(AnthillColor Color, int x, int y, int IndexAnthill, Anthill MaQueen) {
         super(Color, x, y, IndexAnthill);
+        this.CommanderOrder = new SubmissionPublisher<>();
+        MaQueen.DemandeAboReine(this);
 
     }
 
+    /**
+     * information pour abonnement
+     * @param AboCommander
+     */
+    public void DemandeAboCommander(Subscriber<QueenOrders> AboCommander){
+        this.CommanderOrder.subscribe(AboCommander);
+    }
     /**
      * update du commander ( deplacement et ordre)
      */
@@ -23,27 +38,8 @@ public class CommanderAnt extends Ant implements Flow.Subscriber, Flow.Subscript
         //deplacement
         //random sur ma liste possible de déplacement
         Tile tile;
-        ArrayList<Integer> IntList = new ArrayList<Integer>();
-        Random random = new Random();
 
 
-        System.out.println("update");
-
-
-        if (Map.getInstance().getTile(this.XPos, this.YPos - 1) != null) { //vers le haut
-            IntList.add(0);
-        }
-        if (Map.getInstance().getTile(this.XPos, this.YPos + 1) != null) {//vers le bas
-            IntList.add(1);
-        }
-        if (Map.getInstance().getTile(this.XPos + 1, this.YPos) != null) {//vers la droite
-            IntList.add(2);
-        }
-        if (Map.getInstance().getTile(this.XPos - 1, this.YPos) != null) {//vers la gauche
-            IntList.add(3);
-        }
-
-        int nb = IntList.get(random.nextInt(IntList.size())); //random sur la list de int
 
         switch (OrdreReine) {
             case GO_ANTHILL:
@@ -57,11 +53,11 @@ public class CommanderAnt extends Ant implements Flow.Subscriber, Flow.Subscript
                     tile = Map.getInstance().getTile(this.XPos - 1, this.YPos);
                     Map.getInstance().moveTo(this, tile);
                     this.XPos--;
-                } else if (this.YPos < YposAnthill) { // doit monter (affichage)
+                } else if (this.YPos > YposAnthill) { // doit monter (affichage)
                     tile = Map.getInstance().getTile(this.XPos, this.YPos - 1);
                     Map.getInstance().moveTo(this, tile);
                     this.YPos--;
-                } else if (this.YPos > YposAnthill) { //doit descendre (affichage)
+                } else if (this.YPos < YposAnthill) { //doit descendre (affichage)
                     tile = Map.getInstance().getTile(this.XPos, this.YPos + 1);
                     Map.getInstance().moveTo(this, tile);
                     this.YPos++;
@@ -69,7 +65,22 @@ public class CommanderAnt extends Ant implements Flow.Subscriber, Flow.Subscript
 
                 break;
             default:
+                ArrayList<Integer> IntList = new ArrayList<Integer>();
+                Random random = new Random();
+                if (Map.getInstance().getTile(this.XPos, this.YPos - 1) != null) { //vers le haut
+                    IntList.add(0);
+                }
+                if (Map.getInstance().getTile(this.XPos, this.YPos + 1) != null) {//vers le bas
+                    IntList.add(1);
+                }
+                if (Map.getInstance().getTile(this.XPos + 1, this.YPos) != null) {//vers la droite
+                    IntList.add(2);
+                }
+                if (Map.getInstance().getTile(this.XPos - 1, this.YPos) != null) {//vers la gauche
+                    IntList.add(3);
+                }
 
+                int nb = IntList.get(random.nextInt(IntList.size())); //random sur la list de int
 
                 switch (nb) {
                     case 0: // deplacement vers le haut
@@ -107,8 +118,8 @@ public class CommanderAnt extends Ant implements Flow.Subscriber, Flow.Subscript
     }
 
     public void run() {
-        System.out.println("hello from commander");
-        while (true) { // infini (refelchir a finir)
+
+        while (!Constants.FinGame) { // Tant que jeux pas fini
             try {
                 update();
                 Thread.sleep(50);
@@ -125,13 +136,20 @@ public class CommanderAnt extends Ant implements Flow.Subscriber, Flow.Subscript
 
     }
 
+
     @Override
-    public void onSubscribe(Flow.Subscription subscription) {
+    public void onSubscribe(Subscription subscription) {
+        this.AboDuCommander = subscription;
+        this.AboDuCommander.request(1); // recevoir le prochain message
 
     }
 
     @Override
     public void onNext(Object item) {
+        this.OrdreReine= (QueenOrders) item;
+        this.CommanderOrder.offer(this.OrdreReine,(sub, order)->{ return true;});
+        this.AboDuCommander.request(1); // demande le prochain message
+
 
     }
 

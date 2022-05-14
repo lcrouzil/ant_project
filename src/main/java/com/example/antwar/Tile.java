@@ -36,12 +36,11 @@ public class Tile {
      *
      * @param ant
      */
-    public void addAnt(Ant ant) {
+    public synchronized void addAnt(Ant ant) {
         if (ants != null && !ants.contains(ant)) {
             ants.add(ant);
-            System.out.println("fourmi ajouté");
         } else {
-            System.out.println("else du add");
+
         }
     }
 
@@ -50,24 +49,11 @@ public class Tile {
      *
      * @param ant
      */
-    public void removeAnt(Ant ant) {
+    public synchronized void  removeAnt(Ant ant) {
         if (ants.contains(ant)) {
             ants.remove(ant);
         } else {
         }
-    }
-
-    /**
-     * dépose la nouriture a la fourmiliere
-     *
-     * @param nourriture
-     * @param ant
-     */
-    public void dropRessource(Resource nourriture, Ant ant) {
-        //enlever nourriture de la fourmi
-        //ajouter nourriture a fourmiliere
-        //ajout de point ??
-
     }
 
     /**
@@ -87,19 +73,21 @@ public class Tile {
 
             gc.fillRect(this.x_pos * (Constants.WINDOW_SIZE_X / Constants.MAP_SIZE_X), this.y_pos * (Constants.WINDOW_SIZE_Y / Constants.MAP_SIZE_Y), (Constants.WINDOW_SIZE_X / Constants.MAP_SIZE_X), (Constants.WINDOW_SIZE_Y / Constants.MAP_SIZE_Y));
         } else if (this.ants.size() > 0) {
-            switch (this.ants.get(0).AntColor) {
-                case GREEN -> {
-                    gc.setFill(Color.GREEN);
+            Ant antadessiner=this.ants.get(this.ants.size()-1);
+            if(antadessiner!=null) {
+                switch (antadessiner.AntColor) {
+                    case GREEN -> {
+                        gc.setFill(Color.DARKGREEN);
+                    }
+
+                    case BLUE -> gc.setFill(Color.DARKBLUE);
+                    case YELLOW -> gc.setFill(Color.DARKGOLDENROD);
                 }
-
-                case BLUE -> gc.setFill(Color.BLUE);
-                case YELLOW -> gc.setFill(Color.YELLOW);
+                gc.fillOval(this.x_pos * (Constants.WINDOW_SIZE_X / Constants.MAP_SIZE_X), this.y_pos * (Constants.WINDOW_SIZE_Y / Constants.MAP_SIZE_Y), (Constants.WINDOW_SIZE_X / Constants.MAP_SIZE_X), (Constants.WINDOW_SIZE_Y / Constants.MAP_SIZE_Y));
             }
-
-            gc.fillOval(this.x_pos * (Constants.WINDOW_SIZE_X / Constants.MAP_SIZE_X), this.y_pos * (Constants.WINDOW_SIZE_Y / Constants.MAP_SIZE_Y), (Constants.WINDOW_SIZE_X / Constants.MAP_SIZE_X), (Constants.WINDOW_SIZE_Y / Constants.MAP_SIZE_Y));
-        } else if (this.resources > 0) {
-            int a = this.resources * 255 / 30;
-            gc.setFill(Color.rgb(a, 0, 0));
+        } else  {
+            int a = this.Resources.size() * 255 / 50;
+            gc.setFill(Color.rgb(a, 0, a));
             //fill rect
             gc.fillRect(this.x_pos * (Constants.WINDOW_SIZE_X / Constants.MAP_SIZE_X), this.y_pos * (Constants.WINDOW_SIZE_Y / Constants.MAP_SIZE_Y), (Constants.WINDOW_SIZE_X / Constants.MAP_SIZE_X), (Constants.WINDOW_SIZE_Y / Constants.MAP_SIZE_Y));
         }
@@ -117,7 +105,7 @@ public class Tile {
      *
      * @return
      */
-    public Resource TakeResource() {
+    public synchronized Resource TakeResource() {
         //sécurité
         if (Resources.isEmpty()) {
             return null;

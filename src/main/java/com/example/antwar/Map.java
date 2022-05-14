@@ -2,6 +2,8 @@ package com.example.antwar;
 
 import javafx.scene.canvas.GraphicsContext;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -51,7 +53,7 @@ public class Map implements InterfaceMap {
                 // création des commandant
                 CommanderAnt NewCommander;
                 for (int i = 0; i < 5; i++) {
-                    NewCommander = new CommanderAnt(color, XPosAntHill, YPosAntHill, j);
+                    NewCommander = new CommanderAnt(color, XPosAntHill, YPosAntHill, j, TempoAntHill);
                     tiles[XPosAntHill][YPosAntHill].addAnt(NewCommander);
                     anthills[j].commanders.add(NewCommander);
                     //System.out.println(tiles[XPosAntHill][YPosAntHill].ants);
@@ -60,12 +62,12 @@ public class Map implements InterfaceMap {
                 //creation des fourmies
                 WorkerAnt NewAnt;
                 for (int i = 0; i < 50; i++) {
-                    NewAnt = new WorkerAnt(color, XPosAntHill, YPosAntHill, j);
+                    NewAnt = new WorkerAnt(color, XPosAntHill, YPosAntHill, j,anthills[j].commanders.get(i%anthills[j].commanders.size()));
                     tiles[XPosAntHill][YPosAntHill].addAnt(NewAnt);
                     anthills[j].workers.add(NewAnt);
-                    System.out.println(tiles[XPosAntHill][YPosAntHill].ants);
+                    //System.out.println(tiles[XPosAntHill][YPosAntHill].ants);
                 }
-                System.out.println(tiles[XPosAntHill][YPosAntHill].ants.size());
+               // System.out.println(tiles[XPosAntHill][YPosAntHill].ants.size());
 
             }
         }
@@ -82,12 +84,24 @@ public class Map implements InterfaceMap {
      * run les threads
      */
     public void runthread() {
-        Thread thread = new Thread(anthills[1].commanders.get(0)); // rend l'objet en thread
-        thread.start(); //lance le thread
-        thread = new Thread(anthills[2].commanders.get(0)); // rend l'objet en thread
-        thread.start(); //lance le thread
-        thread = new Thread(anthills[0].commanders.get(0)); // rend l'objet en thread
-        thread.start(); //lance le thread
+        Tile tiler;
+        Thread[] thread;
+        Thread threadQueen;
+        int i = 0;
+        for (int j = 0; j < 3; j++) {
+            tiler = getTile(anthills[j]);
+            thread = new Thread[tiler.getAnts().size()];
+            threadQueen = new Thread(anthills[j]);
+            threadQueen.start();
+            for (Ant ant : tiler.getAnts()) {
+                thread[i++] = new Thread(ant);
+            }
+            i=0; //remise a zero pour la boucle de retour
+            for (Thread thread2 : thread) {
+                thread2.start();
+
+            }
+        }
     }
 
     /**
@@ -151,7 +165,7 @@ public class Map implements InterfaceMap {
      * @param ant
      * @param tile
      */
-    public synchronized void moveTo(Ant ant, Tile tile) {
+    public void moveTo(Ant ant, Tile tile) {
         Tile OldTile = getTile(ant.getXPos(), ant.getYPos());
 
         if (OldTile != null) {

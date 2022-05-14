@@ -7,6 +7,13 @@ public class Constants {
     public static final int WINDOW_SIZE_Y = 500;
     public static final int AntLoadMax = 5;
 
+    public static final int TIMERMAX = 120000;
+
+    public static boolean RetournerMaison = false;
+    public static boolean FinGame = false;
+
+
+
     /**
      * random de int de 0 a 500 (exclue)
      */
