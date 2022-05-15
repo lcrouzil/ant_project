@@ -17,6 +17,7 @@ Il y a 3 types de fourmis:
 3. les ouvrières (50)
 Les fourmis bougent de case en case (les déplacement sont Haut, Bas, Gauche et Droite) pour aller chercher des ressources, une fourmi ne peut transporter que 5 ressources et doit les ramener à la colonie avant de pouvoir en ramasser d'autre. A chaque fois que des ressources sont déposés dans la colonie son score augmente.
 Une partie dure 2 min.
+
 Dans chaque fourmillière il y a une reine, cette reine reste dans la fourmillière, elle peut donner des ordres:
 - Aller chercher des ressources - GO_FIND_RESSOURCE
 - Tout le monde rentre dans la fourmillière - GO_ANTHILL 
