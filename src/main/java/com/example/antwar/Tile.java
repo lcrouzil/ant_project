@@ -87,7 +87,7 @@ public class Tile {
             }
         } else  {
             int a = this.Resources.size() * 255 / 50;
-            gc.setFill(Color.rgb(a, 0, a));
+            gc.setFill(Color.rgb(a, 0, 0));
             //fill rect
             gc.fillRect(this.x_pos * (Constants.WINDOW_SIZE_X / Constants.MAP_SIZE_X), this.y_pos * (Constants.WINDOW_SIZE_Y / Constants.MAP_SIZE_Y), (Constants.WINDOW_SIZE_X / Constants.MAP_SIZE_X), (Constants.WINDOW_SIZE_Y / Constants.MAP_SIZE_Y));
         }

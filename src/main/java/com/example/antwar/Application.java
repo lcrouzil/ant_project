@@ -36,7 +36,7 @@ public class Application extends javafx.application.Application {
                     AnthillColor color2 = Map.getInstance().anthills[2].getAntColor();
                     this.stop();
                     stage.close();
-
+                    Final.Display();
                     int resultat1 = Map.getInstance().anthills[0].getScore();
                     int resultat2 = Map.getInstance().anthills[1].getScore();
                     int resultat3 = Map.getInstance().anthills[2].getScore();
