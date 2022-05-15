@@ -25,24 +25,20 @@ public class CommanderAnt extends Ant implements Subscriber, Subscription {
 
     /**
      * information pour abonnement
+     *
      * @param AboCommander
      */
-    public void DemandeAboCommander(Subscriber<QueenOrders> AboCommander){
+    public void DemandeAboCommander(Subscriber<QueenOrders> AboCommander) {
         this.CommanderOrder.subscribe(AboCommander);
     }
+
     /**
      * update du commander ( deplacement et ordre)
      */
     public void update() {
-        //ressource
-        //deplacement
-        //random sur ma liste possible de déplacement
         Tile tile;
-
-
-
         switch (OrdreReine) {
-            case GO_ANTHILL:
+            case GO_ANTHILL: //retour fourmiliere
                 int XposAnthill = Map.getInstance().anthills[IndexAnthill].XPos;
                 int YposAnthill = Map.getInstance().anthills[IndexAnthill].YPos;
                 if (this.XPos < XposAnthill) { //doit allé a droite
@@ -62,11 +58,12 @@ public class CommanderAnt extends Ant implements Subscriber, Subscription {
                     Map.getInstance().moveTo(this, tile);
                     this.YPos++;
                 }
-
                 break;
-            default:
+
+            default: //pas d'ordre retour fourmiliere
                 ArrayList<Integer> IntList = new ArrayList<Integer>();
                 Random random = new Random();
+                //ajout dans une arraylist les deplacements possible
                 if (Map.getInstance().getTile(this.XPos, this.YPos - 1) != null) { //vers le haut
                     IntList.add(0);
                 }
@@ -79,7 +76,7 @@ public class CommanderAnt extends Ant implements Subscriber, Subscription {
                 if (Map.getInstance().getTile(this.XPos - 1, this.YPos) != null) {//vers la gauche
                     IntList.add(3);
                 }
-
+                //random sur l'array
                 int nb = IntList.get(random.nextInt(IntList.size())); //random sur la list de int
 
                 switch (nb) {
@@ -111,12 +108,12 @@ public class CommanderAnt extends Ant implements Subscriber, Subscription {
 
                         break;
                 }
-                //verifie diff de nul avant déplacement
-                // int[] randomCoord = this.lenomdetamethodedansAnt(this.this.XPos], this.this.YPos])
-                //Map.getInstance().MoveTo(this,Map.getInstance().getTiles()[this.XPos][this.YPos],Map.getInstance().getTiles()[random[0][random[1]);
         }
     }
 
+    /**
+     * run du commandant
+     */
     public void run() {
 
         while (!Constants.FinGame) { // Tant que jeux pas fini
@@ -129,13 +126,6 @@ public class CommanderAnt extends Ant implements Subscriber, Subscription {
         }
     }
 
-    /**
-     * encore necessaire ??
-     */
-    public void addObserver() {
-
-    }
-
 
     @Override
     public void onSubscribe(Subscription subscription) {
@@ -146,8 +136,10 @@ public class CommanderAnt extends Ant implements Subscriber, Subscription {
 
     @Override
     public void onNext(Object item) {
-        this.OrdreReine= (QueenOrders) item;
-        this.CommanderOrder.offer(this.OrdreReine,(sub, order)->{ return true;});
+        this.OrdreReine = (QueenOrders) item;
+        this.CommanderOrder.offer(this.OrdreReine, (sub, order) -> {
+            return true;
+        });
         this.AboDuCommander.request(1); // demande le prochain message
 
 

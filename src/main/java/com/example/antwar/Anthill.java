@@ -10,12 +10,10 @@ public class Anthill extends Ant {
     private int YPOS;
     ArrayList<WorkerAnt> workers = new ArrayList<WorkerAnt>();
     ArrayList<CommanderAnt> commanders = new ArrayList<CommanderAnt>();
-    //ArrayList<Resource> resources = new ArrayList<Resource>();
-    AnthillColor color;
+
     public ArrayList<Resource> resource = new ArrayList<Resource>();
     private int score;
     private SubmissionPublisher<QueenOrders> OrdreReine;
-
 
 
     /**
@@ -33,17 +31,8 @@ public class Anthill extends Ant {
     /**
      * information pour abonnement
      */
-    public void DemandeAboReine(Flow.Subscriber<QueenOrders> AboReine){
+    public void DemandeAboReine(Flow.Subscriber<QueenOrders> AboReine) {
         this.OrdreReine.subscribe(AboReine);
-    }
-
-    /**
-     * retourne la couleur de la fourmi
-     *
-     * @return
-     */
-    public AnthillColor Color() {
-        return this.color;
     }
 
 
@@ -77,17 +66,30 @@ public class Anthill extends Ant {
 
     }
 
-    //TODO
+
+    /**
+     * recupere le score de la fourmiliere
+     *
+     * @return
+     */
     public int getScore() {
         return this.resource.size();
     }
 
+    /**
+     * run de la fourmiliere (reine)
+     * thread et ordre
+     */
     public void run() {
         while (!Constants.FinGame) { // tant que game pas fini
-            if(Constants.RetournerMaison){
-                this.OrdreReine.offer(QueenOrders.GO_ANTHILL,(sub, order)->{ return true;});
-            }else{
-                this.OrdreReine.offer(QueenOrders.GO_FIND_RESSOURCE,(sub, order)->{ return true;});
+            if (Constants.RetournerMaison) {
+                this.OrdreReine.offer(QueenOrders.GO_ANTHILL, (sub, order) -> {
+                    return true;
+                });
+            } else {
+                this.OrdreReine.offer(QueenOrders.GO_FIND_RESSOURCE, (sub, order) -> {
+                    return true;
+                });
             }
             try {
                 Thread.sleep(50);

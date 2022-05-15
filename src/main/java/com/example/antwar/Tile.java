@@ -49,7 +49,7 @@ public class Tile {
      *
      * @param ant
      */
-    public synchronized void  removeAnt(Ant ant) {
+    public synchronized void removeAnt(Ant ant) {
         if (ants.contains(ant)) {
             ants.remove(ant);
         } else {
@@ -63,7 +63,7 @@ public class Tile {
      */
     public void draw(GraphicsContext gc) {
 
-        if (this.anthill != null) {
+        if (this.anthill != null) { //fourmiliere
             switch (this.anthill.getAntColor()) {
                 case GREEN -> gc.setFill(Color.GREEN);
                 case BLUE -> gc.setFill(Color.BLUE);
@@ -72,23 +72,19 @@ public class Tile {
             }
 
             gc.fillRect(this.x_pos * (Constants.WINDOW_SIZE_X / Constants.MAP_SIZE_X), this.y_pos * (Constants.WINDOW_SIZE_Y / Constants.MAP_SIZE_Y), (Constants.WINDOW_SIZE_X / Constants.MAP_SIZE_X), (Constants.WINDOW_SIZE_Y / Constants.MAP_SIZE_Y));
-        } else if (this.ants.size() > 0) {
-            Ant antadessiner=this.ants.get(this.ants.size()-1);
-            if(antadessiner!=null) {
+        } else if (this.ants.size() > 0) { // ant a dessiner
+            Ant antadessiner = this.ants.get(this.ants.size() - 1);
+            if (antadessiner != null) {
                 switch (antadessiner.AntColor) {
-                    case GREEN -> {
-                        gc.setFill(Color.DARKGREEN);
-                    }
-
+                    case GREEN -> gc.setFill(Color.DARKGREEN);
                     case BLUE -> gc.setFill(Color.DARKBLUE);
                     case YELLOW -> gc.setFill(Color.DARKGOLDENROD);
                 }
                 gc.fillOval(this.x_pos * (Constants.WINDOW_SIZE_X / Constants.MAP_SIZE_X), this.y_pos * (Constants.WINDOW_SIZE_Y / Constants.MAP_SIZE_Y), (Constants.WINDOW_SIZE_X / Constants.MAP_SIZE_X), (Constants.WINDOW_SIZE_Y / Constants.MAP_SIZE_Y));
             }
-        } else  {
+        } else { // les ressources avec degradé pour indiqué la quantité
             int a = this.Resources.size() * 255 / 50;
-            gc.setFill(Color.rgb(a, 0, 0));
-            //fill rect
+            gc.setFill(Color.rgb(a, 0, a));
             gc.fillRect(this.x_pos * (Constants.WINDOW_SIZE_X / Constants.MAP_SIZE_X), this.y_pos * (Constants.WINDOW_SIZE_Y / Constants.MAP_SIZE_Y), (Constants.WINDOW_SIZE_X / Constants.MAP_SIZE_X), (Constants.WINDOW_SIZE_Y / Constants.MAP_SIZE_Y));
         }
 
@@ -128,16 +124,19 @@ public class Tile {
         return Resources.size();
     }
 
-    //TODO
-    /*public ResourceType getResourceType(){
-
-
-    }*/
-
-
+    /**
+     * array de ants
+     *
+     * @return
+     */
     public ArrayList<Ant> getAnts() {
         return ants;
     }
+
+    //TODO
+
+
+    //public ResourceType getResourceType(){}
 
     public void setAnts(ArrayList<Ant> ants) {
         this.ants = ants;

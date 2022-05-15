@@ -30,12 +30,21 @@ public abstract class Ant implements Serializable, Runnable { // Runnable comme 
         return this.isInjured;
     }
 
+    /**
+     * couleur fourmi
+     *
+     * @return
+     */
     public AnthillColor getAntColor() {
 
         return this.AntColor;
     }
 
-
+    /**
+     * recupere la position en x
+     *
+     * @return
+     */
     public int getXPos() {
         return this.XPos;
     }
@@ -44,6 +53,11 @@ public abstract class Ant implements Serializable, Runnable { // Runnable comme 
         this.XPos = NewXPos;
     }
 
+    /**
+     * recupere la position en y
+     *
+     * @return
+     */
     public int getYPos() {
         return this.YPos;
     }

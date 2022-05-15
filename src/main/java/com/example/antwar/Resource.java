@@ -4,7 +4,7 @@ public class Resource {
     ResourceType type;
 
     public Resource(ResourceType collecte) {
-        type=collecte;
+        type = collecte;
 
     }
 }

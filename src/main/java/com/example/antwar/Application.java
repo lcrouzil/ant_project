@@ -14,7 +14,7 @@ public class Application extends javafx.application.Application {
     @Override
     public void start(Stage stage) throws IOException {
         Map.getInstance().runthread();
-        Temps timercyclejeu= new  Temps();
+        Temps timercyclejeu = new Temps();
         timercyclejeu.DepartChrono();
         Group root = new Group();
         Scene scene = new Scene(root);
@@ -30,26 +30,25 @@ public class Application extends javafx.application.Application {
                 GraphicsContext gc = canvas.getGraphicsContext2D();
                 gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
                 Map.getInstance().draw(gc);
-                if (Constants.FinGame){
+                if (Constants.FinGame) { //fin de game
                     AnthillColor color0 = Map.getInstance().anthills[0].getAntColor();
                     AnthillColor color1 = Map.getInstance().anthills[1].getAntColor();
                     AnthillColor color2 = Map.getInstance().anthills[2].getAntColor();
                     this.stop();
                     stage.close();
-                    Final.Display();
+                    Final.Display(); // nouvelle fenetre vainqueur
                     int resultat1 = Map.getInstance().anthills[0].getScore();
                     int resultat2 = Map.getInstance().anthills[1].getScore();
                     int resultat3 = Map.getInstance().anthills[2].getScore();
 
-                   if (resultat1 < resultat2 && resultat2 > resultat3){
-                        System.out.println("La fourmiliere "+color1+" a gagné avec " + resultat2 + " ressources ");
+                    if (resultat1 < resultat2 && resultat2 > resultat3) {
+                        System.out.println("La fourmiliere " + color1 + " a gagné avec " + resultat2 + " ressources ");
                     } else if (resultat1 > resultat2 && resultat1 > resultat3) {
 
-                        System.out.println("La fourmiliere "+color0+" a gagné avec " + resultat1 + " ressources");
-                    }
-                    else {
+                        System.out.println("La fourmiliere " + color0 + " a gagné avec " + resultat1 + " ressources");
+                    } else {
 
-                        System.out.println("La fourmiliere "+color2+" a gagné avec " + resultat3 + " ressources");
+                        System.out.println("La fourmiliere " + color2 + " a gagné avec " + resultat3 + " ressources");
 
                     }
                     System.out.println("resultat de " + color0 + " " + resultat1 + " ressources");

@@ -2,16 +2,13 @@ package com.example.antwar;
 
 import javafx.scene.canvas.GraphicsContext;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Random;
 
 /**
  * une seul map par jeu
  */
 public class Map implements InterfaceMap {
     private static Map singleton; // static car une seul map
-    //    private Tile[][] tiles = new Tile[Constants.MAP_SIZE_X][Constants.MAP_SIZE_Y];
+
     public Tile[][] tiles;
     public Anthill[] anthills = new Anthill[3];
 
@@ -20,7 +17,6 @@ public class Map implements InterfaceMap {
         tiles = new Tile[Constants.MAP_SIZE_X][Constants.MAP_SIZE_Y];
         for (int i = 0; i < Constants.MAP_SIZE_X; i++) {
             for (int j = 0; j < Constants.MAP_SIZE_Y; j++) {
-                //   this.tiles[i][j] = new Tile(null, i, j);
                 this.tiles[i][j] = new Tile(null, i, j);
             }
         }
@@ -56,28 +52,18 @@ public class Map implements InterfaceMap {
                     NewCommander = new CommanderAnt(color, XPosAntHill, YPosAntHill, j, TempoAntHill);
                     tiles[XPosAntHill][YPosAntHill].addAnt(NewCommander);
                     anthills[j].commanders.add(NewCommander);
-                    //System.out.println(tiles[XPosAntHill][YPosAntHill].ants);
                 }
 
                 //creation des fourmies
                 WorkerAnt NewAnt;
                 for (int i = 0; i < 50; i++) {
-                    NewAnt = new WorkerAnt(color, XPosAntHill, YPosAntHill, j,anthills[j].commanders.get(i%anthills[j].commanders.size()));
+                    NewAnt = new WorkerAnt(color, XPosAntHill, YPosAntHill, j, anthills[j].commanders.get(i % anthills[j].commanders.size()));
                     tiles[XPosAntHill][YPosAntHill].addAnt(NewAnt);
                     anthills[j].workers.add(NewAnt);
-                    //System.out.println(tiles[XPosAntHill][YPosAntHill].ants);
-                }
-               // System.out.println(tiles[XPosAntHill][YPosAntHill].ants.size());
 
+                }
             }
         }
-// verif des coord du tableau
-//        WorkerAnt workerantBlue = new WorkerAnt(AnthillColor.BLUE,10,10,10);
-//        WorkerAnt workerantGreen = new WorkerAnt(AnthillColor.GREEN,10,11,10);
-//        tiles[1][1].addAnt(workerantBlue);
-//        tiles[1][3].addAnt(workerantGreen);
-
-
     }
 
     /**
@@ -96,7 +82,7 @@ public class Map implements InterfaceMap {
             for (Ant ant : tiler.getAnts()) {
                 thread[i++] = new Thread(ant);
             }
-            i=0; //remise a zero pour la boucle de retour
+            i = 0; //remise a zero pour la boucle de retour
             for (Thread thread2 : thread) {
                 thread2.start();
 
@@ -107,7 +93,7 @@ public class Map implements InterfaceMap {
     /**
      * get la map
      *
-     * @return
+     * @return singleton
      */
     public static Map getInstance() {
         if (singleton == null) {
@@ -116,14 +102,6 @@ public class Map implements InterfaceMap {
         return singleton;
     }
 
-    /**
-     * get tuile
-     *
-     * @return
-     */
-    public Tile[][] getTiles() {
-        return tiles;
-    }
 
     /**
      * creation de la partie graphic
@@ -138,6 +116,12 @@ public class Map implements InterfaceMap {
         }
     }
 
+    /**
+     * recupere la tuile anthill
+     *
+     * @param anthill
+     * @return
+     */
     public Tile getTile(Anthill anthill) {
         if (anthill != null) {
             return tiles[anthill.XPos][anthill.YPos];
@@ -145,11 +129,13 @@ public class Map implements InterfaceMap {
         return null;
     }
 
-    public Tile getTile(Ant ant) {
-        return tiles[ant.getXPos()][ant.getYPos()];
-    }
-
-
+    /**
+     * retourne les coord de la tuile dans la map ou null si hors map
+     *
+     * @param x
+     * @param y
+     * @return
+     */
     public Tile getTile(int x, int y) {
         if (x >= Constants.MAP_SIZE_X || y >= Constants.MAP_SIZE_Y || x < 0 || y < 0) {
             return null;

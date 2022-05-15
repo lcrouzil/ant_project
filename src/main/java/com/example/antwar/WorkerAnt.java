@@ -28,18 +28,13 @@ public class WorkerAnt extends Ant implements Subscriber {
     }
 
     /**
-     * mise a jour des ordres
+     * mise a jour du worker ant
+     * deplacement/ordre/ressource
      */
     public void update() {
-        //ressource
-        //deplacement
-        //random sur ma liste possible de déplacement
         Tile tile;
         ArrayList<Integer> IntList = new ArrayList<Integer>();
         Random random = new Random();
-
-
-
 
         if (Map.getInstance().getTile(this.XPos, this.YPos - 1) != null) { //vers le haut
             IntList.add(0);
@@ -77,8 +72,8 @@ public class WorkerAnt extends Ant implements Subscriber {
                     Map.getInstance().moveTo(this, tile);
                     this.YPos++;
                 } else if (!this.resources.isEmpty()) { //doit decharger les ressources
-                    Map.getInstance().anthills[IndexAnthill].addResource(this.resources.remove(this.resources.size()-1));
-            }
+                    Map.getInstance().anthills[IndexAnthill].addResource(this.resources.remove(this.resources.size() - 1));
+                }
 
                 break;
 
@@ -104,19 +99,19 @@ public class WorkerAnt extends Ant implements Subscriber {
                         tile = Map.getInstance().getTile(this.XPos, this.YPos + 1);
                         Map.getInstance().moveTo(this, tile);
                         this.YPos++;
-                    }else if (!this.resources.isEmpty()) { //doit decharger les ressources
-                        Map.getInstance().anthills[IndexAnthill].addResource(this.resources.remove(this.resources.size()-1));
-                        if(this.resources.isEmpty()){ // vide donc plus besoin de rester a la maison
-                            GO_HOME=false;
+                    } else if (!this.resources.isEmpty()) { //doit decharger les ressources
+                        Map.getInstance().anthills[IndexAnthill].addResource(this.resources.remove(this.resources.size() - 1));
+                        if (this.resources.isEmpty()) { // vide donc plus besoin de rester a la maison
+                            GO_HOME = false;
                         }
                     }
 
-                    } else if (Map.getInstance().getTile(this.XPos, this.YPos).getTileResourceQuantity() > 0) { // si ressource sur case
+                } else if (Map.getInstance().getTile(this.XPos, this.YPos).getTileResourceQuantity() > 0) { // si ressource sur case
                     resources.add(Map.getInstance().getTile(this.XPos, this.YPos).TakeResource()); //prend la ressource et l'ajoute
-                    if (resources.get(resources.size()-1) == null) { //dans le cas d'une mauvaise synchro et ressource acquise null retire de la liste (perte d'un tour a améliorer)
-                        resources.remove(resources.size()-1);// retrait de la resource null
+                    if (resources.get(resources.size() - 1) == null) { //dans le cas d'une mauvaise synchro et ressource acquise null retire de la liste (perte d'un tour a améliorer)
+                        resources.remove(resources.size() - 1);// retrait de la resource null
                     }
-                    if (resources.size()==Constants.AntLoadMax){
+                    if (resources.size() == Constants.AntLoadMax) { //fourmi chargé
                         GO_HOME = true;
                     }
                 } else {
@@ -174,7 +169,7 @@ public class WorkerAnt extends Ant implements Subscriber {
 
     @Override
     public void onNext(Object item) {
-        this.CommanderOrder= (QueenOrders) item;
+        this.CommanderOrder = (QueenOrders) item;
         this.AboDuWorkerAnt.request(1); // demande le prochain message
     }
 

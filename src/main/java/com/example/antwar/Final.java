@@ -12,16 +12,16 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class Final  {
+public class Final {
 
-    public static void Display()  {
+    public static void Display() {
 
-        Stage stage=new Stage();
+        Stage stage = new Stage();
         stage.setResizable(false);
         stage.setTitle("Resultat");
         stage.setOnCloseRequest(e -> System.exit(0));
 
-        if (Constants.FinGame) {
+        if (Constants.FinGame) { //fin du jeu
 
             AnthillColor color0 = Map.getInstance().anthills[0].getAntColor();
             AnthillColor color1 = Map.getInstance().anthills[1].getAntColor();
@@ -46,15 +46,14 @@ public class Final  {
             resColor0 = new Label("resultat de " + color0 + " " + resultat1 + " ressources");
             resColor1 = new Label("resultat de " + color1 + " " + resultat2 + " ressources");
             resColor2 = new Label("resultat de " + color2 + " " + resultat3 + " ressources");
-            vbox.getChildren().addAll(resultat,resColor0,resColor1,resColor2); //addall pour ajout tout label attention nom !=
-            Scene scene = new Scene(vbox,380,120);
+            vbox.getChildren().addAll(resultat, resColor0, resColor1, resColor2); //addall pour ajout tout label attention nom !=
+            Scene scene = new Scene(vbox, 380, 120);
             stage.setScene(scene);
             stage.show();
         }
 
 
     }
-
 
 
 }
